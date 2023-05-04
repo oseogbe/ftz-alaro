@@ -23,7 +23,7 @@ defineProps({
 
 const submit = () => {
     form.post(route("register"), {
-        onFinish: () => form.reset(),
+        onSuccess: () => form.reset(),
     });
 };
 </script>

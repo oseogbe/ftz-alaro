@@ -63,11 +63,11 @@ import { Head, Link } from "@inertiajs/vue3";
                     <div
                         class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:pl-5"
                     >
-                        <a
+                        <Link
                             class="text-lg font-medium text-secondary"
-                            href="#"
+                            :href="route('login')"
                             aria-current="page"
-                            >Admin</a
+                            >Admin</Link
                         >
                     </div>
                 </div>
