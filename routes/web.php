@@ -23,7 +23,6 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [ApplicationController::class, 'index'])->name('dashboard');
-    Route::get('/filter', [ApplicationController::class, 'filter'])->name('filter');
 });
 
 Route::middleware('auth')->group(function () {

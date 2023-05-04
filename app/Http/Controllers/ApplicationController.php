@@ -9,13 +9,12 @@ class ApplicationController extends Controller
 {
     public function index()
     {
-        $applications = Application::filter()->latest()->paginate();
+        $applications = Application::filter()->latest()->paginate()->withQueryString();
 
-        return inertia('Dashboard', compact('applications'));
-    }
+        $pendingApplications = Application::where('status', 1)->count();
 
-    public function filter()
-    {
-        return Application::filter()->latest()->paginate(1);
+        $search = request()->search;
+
+        return inertia('Dashboard', compact('applications', 'pendingApplications', 'search'));
     }
 }

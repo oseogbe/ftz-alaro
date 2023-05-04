@@ -32,19 +32,14 @@ class Application extends Model
 
     public function scopeFilter($query)
     {
-        $query->when(request('status'), fn ($query) => $query->where('status', request('status')))
-            ->when(request('orderBy'), fn ($query) => $query->orderBy(request('orderBy'), request('dir', 'asc')));
-
-        // $query->when(request('search'), fn ($query) =>
-        //     $query->where('company_name', 'like', '%'.request('search').'%'))
-        //             ->orWhere('company_email', 'like', '%'.request('search').'%')
-        //             ->orWhere('first_name', 'like', '%'.request('search').'%')
-        //             ->orWhere('last_name', 'like', '%'.request('search').'%')
-        //             ->orWhere('email', 'like', '%'.request('search').'%')
-        //             ->orWhere('phone', 'like', '%'.request('search').'%')
-        // ->when(request('status'), fn ($query) =>
-        //         $query->where('status', request('status')))
-        // ->when(request('orderBy'), fn ($query) =>
-        //         $query->orderBy(request('orderBy'), request('dir', 'asc')));
+        $query->when(request('search'), fn ($query, $search) =>
+                $query->where('company_name', 'like', "%{$search}%")
+                    ->orWhere('company_email', 'like', "%{$search}%")
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%"))
+            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
+            ->when(request('sortBy'), fn ($query, $sortBy) => $query->orderBy($sortBy, request('dir', 'asc')));
     }
 }

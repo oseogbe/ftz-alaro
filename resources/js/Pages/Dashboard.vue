@@ -1,31 +1,53 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    applications: {
-        type: Object,
-    },
+    applications: Object,
+    pendingApplications: Number,
+    search: String
 });
 
 const selectedStatus = ref(null);
 
-// const applications = ref({});
-
 const filterByStatus = (status = '') => {
-    // axios.get(`/filter?status=${status}`).then(response => applications.value = response.data);
-    // selectedStatus.value = status;
+    router.get('/dashboard', { status }, {
+        preserveState: true,
+        replace: true
+    });
+    selectedStatus.value = status;
 };
 
-filterByStatus();
+const search = ref(props.search);
+
+watch(search, value => {
+    router.get('/dashboard', { search: value }, {
+        preserveState: true,
+        replace: true
+    })
+});
+
+const dir = ref('asc');
+
+const sortCompanies = () => {
+    dir.value = dir.value === 'asc' ? 'desc' : 'asc';
+    router.get('/dashboard', { sortBy: 'company_name', dir: dir.value }, {
+        preserveState: true,
+        replace: true
+    });
+};
+
+// router.delete(`/applications/${application.id}`, {
+//     onBefore: () => confirm('Are you sure you want to delete this application?'),
+// })
+
 </script>
 
 <template>
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <!-- component -->
         <section>
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div>
@@ -38,12 +60,12 @@ filterByStatus();
 
                         <span
                             class="px-3 py-1 text-xs text-secondary bg-secondary/10 rounded-full"
-                            >240</span
+                            >{{ applications.data.length }}</span
                         >
                     </div>
 
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                        You have 3 pending applications today.
+                        You have {{ pendingApplications }} pending applications today.
                     </p>
                 </div>
             </div>
@@ -54,7 +76,7 @@ filterByStatus();
                 >
                     <button
                         @click="filterByStatus()"
-                        :class="{ active: selectedStatus === '' }"
+                        :class="{ active: !selectedStatus }"
                         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
                     >
                         View all
@@ -105,6 +127,7 @@ filterByStatus();
 
                     <input
                         type="text"
+                        v-model="search"
                         placeholder="Search"
                         class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 focus:border-none focus:ring-secondary focus:outline-none focus:ring focus:ring-opacity-40"
                     />
@@ -129,6 +152,7 @@ filterByStatus();
                                             class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                                         >
                                             <button
+                                                @click="sortCompanies()"
                                                 class="flex items-center gap-x-3 focus:outline-none"
                                             >
                                                 <span>Company</span>
