@@ -2,46 +2,56 @@
 import { ref, watch } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
+import debounce from "lodash/debounce";
 
 const props = defineProps({
     applications: Object,
     pendingApplications: Number,
-    search: String
+    search: String,
 });
 
 const selectedStatus = ref(null);
 
-const filterByStatus = (status = '') => {
-    router.get('/dashboard', { status }, {
-        preserveState: true,
-        replace: true
-    });
+const filterByStatus = (status = "") => {
+    router.get(
+        "/dashboard",
+        { status },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
     selectedStatus.value = status;
 };
 
 const search = ref(props.search);
 
-watch(search, value => {
-    router.get('/dashboard', { search: value }, {
-        preserveState: true,
-        replace: true
-    })
-});
+watch(search, debounce(function (value) {
+    router.get("/dashboard", { search: value },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
+}, 500));
 
-const dir = ref('asc');
+const dir = ref("asc");
 
 const sortCompanies = () => {
-    dir.value = dir.value === 'asc' ? 'desc' : 'asc';
-    router.get('/dashboard', { sortBy: 'company_name', dir: dir.value }, {
-        preserveState: true,
-        replace: true
-    });
+    dir.value = dir.value === "asc" ? "desc" : "asc";
+    router.get(
+        "/dashboard",
+        { sortBy: "company_name", dir: dir.value },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
 };
 
 // router.delete(`/applications/${application.id}`, {
 //     onBefore: () => confirm('Are you sure you want to delete this application?'),
 // })
-
 </script>
 
 <template>
@@ -65,7 +75,8 @@ const sortCompanies = () => {
                     </div>
 
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                        You have {{ pendingApplications }} pending applications today.
+                        You have {{ pendingApplications }} pending applications
+                        today.
                     </p>
                 </div>
             </div>
@@ -95,7 +106,7 @@ const sortCompanies = () => {
                         :class="{ active: selectedStatus === 2 }"
                         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
                     >
-                        Accepted
+                        Approved
                     </button>
 
                     <button
@@ -305,7 +316,12 @@ const sortCompanies = () => {
                                             class="px-4 py-4 text-sm font-medium whitespace-nowrap"
                                         >
                                             <div
-                                                class="inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
+                                                :class="{
+                                                    'text-blue-500 gap-x-2 bg-blue-100/60' : application.status === 'Pending',
+                                                    'text-green-500 gap-x-2 bg-green-100/60' : application.status === 'Approved',
+                                                    'text-red-500 gap-x-2 bg-red-100/60' : application.status === 'Declined',
+                                                }"
+                                                class="inline px-3 py-1 text-sm font-normal rounded-full"
                                             >
                                                 {{ application.status }}
                                             </div>
@@ -314,24 +330,48 @@ const sortCompanies = () => {
                                         <td
                                             class="px-4 py-4 text-sm whitespace-nowrap"
                                         >
-                                            <button
-                                                class="px-1 py-1 text-gray-500 transition-colors duration-200 rounded-lg dark:text-gray-300 hover:bg-gray-100"
+                                            <div
+                                                class="hs-tooltip inline-block [--trigger:click] [--placement:bottom]"
                                             >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
+                                                <button
+                                                    class="hs-tooltip-toggle px-1 py-1 block text-center transition-colors duration-200 rounded-lg hover:bg-gray-100"
+                                                    type="button"
                                                 >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                                                    />
-                                                </svg>
-                                            </button>
+                                                    <span>
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke-width="1.5"
+                                                            stroke="currentColor"
+                                                            class="w-6 h-6"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                    <div
+                                                        class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 bg-white border text-sm text-gray-600 rounded-md shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400"
+                                                        role="tooltip"
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            class="block py-3 px-4 text-green-500 hover:bg-gray-100"
+                                                        >
+                                                            Accept
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            class="block py-3 px-4 text-red-500 hover:bg-gray-100"
+                                                        >
+                                                            Decline
+                                                        </button>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -343,7 +383,10 @@ const sortCompanies = () => {
 
             <div class="mt-6 sm:flex sm:items-center sm:justify-between">
                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                    Page <span class="font-medium text-gray-700 dark:text-gray-100">1 of 10</span>
+                    Page
+                    <span class="font-medium text-gray-700 dark:text-gray-100"
+                        >1 of 10</span
+                    >
                 </div>
 
                 <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
@@ -370,10 +413,7 @@ const sortCompanies = () => {
 
                         <span> previous </span>
                     </Link>
-                    <span
-                        v-else
-                        class="pagination-link"
-                    >
+                    <span v-else class="pagination-link">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -415,10 +455,7 @@ const sortCompanies = () => {
                             />
                         </svg>
                     </Link>
-                    <span
-                        v-else
-                        class="pagination-link"
-                    >
+                    <span v-else class="pagination-link">
                         <span> Next </span>
 
                         <svg

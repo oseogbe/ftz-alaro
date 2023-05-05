@@ -23,7 +23,7 @@ class Application extends Model
     {
         $status = match ($value) {
             '1' => 'Pending',
-            '2' => 'Accepted',
+            '2' => 'Approved',
             '3' => 'Declined'
         };
 

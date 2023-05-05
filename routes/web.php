@@ -23,6 +23,11 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [ApplicationController::class, 'index'])->name('dashboard');
+
+    Route::prefix('applications')->group(function () {
+        Route::post('/{application_id}/approve', [ApplicationController::class, 'approve']);
+        Route::post('/{application_id}/decline', [ApplicationController::class, 'decline']);
+    });
 });
 
 Route::middleware('auth')->group(function () {

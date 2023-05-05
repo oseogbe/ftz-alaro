@@ -20,12 +20,13 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('company_name');
             $table->string('company_email')->unique();
-            $table->enum('status', [1, 2, 3])->default(1)->comment('1 - Pending, 2 - Accepted, 3 - Declined');
+            $table->enum('status', [1, 2, 3])->default(1)->comment('1 - Pending, 2 - Approved, 3 - Declined');
             $table->foreignIdFor(User::class, 'approved_by')->nullable();
             $table->dateTime('approved_at')->nullable();
             $table->foreignIdFor(User::class, 'declined_by')->nullable();
             $table->dateTime('declined_at')->nullable();
             $table->text('comments')->nullable();
+            $table->string('link')->nullable();
             $table->timestamps();
         });
     }
