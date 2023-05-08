@@ -1,10 +1,11 @@
 <script setup>
+import { ref } from "vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
     first_name: "",
@@ -21,7 +22,10 @@ defineProps({
     },
 });
 
+const selectedCountryCode = ref("+234");
+
 const submit = () => {
+    form.phone = `${selectedCountryCode.value} ${form.phone}`;
     form.post(route("register"), {
         onSuccess: () => form.reset(),
     });
@@ -123,6 +127,7 @@ const submit = () => {
                                     id="hs-inline-leading-select-country"
                                     name="hs-inline-leading-select-country"
                                     class="block w-full border-transparent rounded-md focus:ring-0 focus:border-none"
+                                    v-model="selectedCountryCode"
                                 >
                                     <option value="+234">NG</option>
                                     <option value="+1">US</option>
