@@ -11,13 +11,11 @@ class ApplicationController extends Controller
 {
     public function index()
     {
-        $applications = Application::filter()->latest()->paginate()->withQueryString();
-
+        $applications = Application::filter()->latest()->paginate(10)->withQueryString();
+        $allApplications = Application::count();
         $pendingApplications = Application::where('status', 1)->count();
-
         $search = request()->search;
-
-        return inertia('Dashboard', compact('applications', 'pendingApplications', 'search'));
+        return inertia('Dashboard', compact('applications', 'allApplications', 'pendingApplications', 'search'));
     }
 
     public function approve($application_id)
@@ -29,6 +27,7 @@ class ApplicationController extends Controller
             'approved_by' => auth()->id(),
         ]);
         ApplicationApprovedJob::dispatch($application);
+        return redirect()->route('dashboard');
     }
 
     public function decline(Request $request, $application_id)
@@ -44,5 +43,6 @@ class ApplicationController extends Controller
             'comments' => $validated['comments']
         ]);
         ApplicationDeclinedJob::dispatch($application);
+        return redirect()->route('dashboard');
     }
 }

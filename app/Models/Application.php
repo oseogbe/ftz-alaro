@@ -16,7 +16,13 @@ class Application extends Model
         'phone',
         'company_name',
         'company_email',
-        'status'
+        'status',
+        'approved_by',
+        'approved_at',
+        'declined_by',
+        'declined_at',
+        'comments',
+        'link',
     ];
 
     public function getStatusAttribute($value)

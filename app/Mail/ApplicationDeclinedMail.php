@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Application;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -16,10 +17,9 @@ class ApplicationDeclinedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public Application $application
+    ) {}
 
     /**
      * Get the message envelope.
@@ -27,7 +27,7 @@ class ApplicationDeclinedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Application Declined Mail',
+            subject: config('app.name').' | Application Declined',
         );
     }
 
@@ -37,7 +37,7 @@ class ApplicationDeclinedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.application-declined',
         );
     }
 
@@ -50,4 +50,23 @@ class ApplicationDeclinedMail extends Mailable
     {
         return [];
     }
+
+    // public function build()
+    // {
+    //     return $this
+    //         ->view([])
+    //         ->from('notifications@nepza.online')
+    //         ->to('mohd.isma@gmail.com')
+    //         ->sendgrid([
+    //             'personalizations' => [
+    //                 [
+    //                     'dynamic_template_data' => [
+    //                         'subject' => config('app.name').' | Application Declined',
+    //                     ],
+    //                 ],
+    //             ],
+    //             'template_id' => config('services.sendgrid.templates.application_declined_template_id'),
+    //             'categories' => ['application-declined'],
+    //         ]);
+    // }
 }

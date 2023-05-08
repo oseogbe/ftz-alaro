@@ -10,7 +10,7 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class="container mx-auto selection:bg-secondary">
+    <div class="container mx-auto selection:bg-secondary/40">
         <header
             class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4"
         >
