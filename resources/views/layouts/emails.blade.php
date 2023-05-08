@@ -27,11 +27,11 @@
             margin-bottom: 2em;
         }
 
-        @media only screen and (min-width: 600px) {
+        /* @media only screen and (min-width: 600px) {
             .email-content {
                 text-align: center;
             }
-        }
+        } */
 
         .email-button {
             display: block;
