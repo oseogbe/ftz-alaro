@@ -25,10 +25,12 @@ defineProps({
 const selectedCountryCode = ref("+234");
 
 const submit = () => {
-    form.phone = `${selectedCountryCode.value} ${form.phone}`;
-    form.post(route("register"), {
-        onSuccess: () => form.reset(),
-    });
+    form.transform((data) => ({
+        ...data,
+        phone: `${selectedCountryCode.value} ${data.phone}`
+    })).post(route("register"), {
+        onSuccess: () => form.reset()
+    })
 };
 </script>
 
@@ -44,7 +46,7 @@ const submit = () => {
             ></div>
             <div class="py-3 px-4 md:py-8 md:px-5">
                 <div
-                    v-if="success"
+                    v-if="form.recentlySuccessful"
                     class="mb-4 font-medium text-md text-green-600"
                 >
                     {{ success }}
